@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -54,19 +55,47 @@ public class TweetsAdapter extends RecyclerView.Adapter<TweetsAdapter.ViewHolder
         ImageView ivProfileImage;
         TextView tvBody;
         TextView tvScreenName;
+        ImageView media;
+        TextView tvCreatedAt;
+        CardView cvTweetImage;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             ivProfileImage = itemView.findViewById(R.id.ivProfileImage);
             tvBody = itemView.findViewById(R.id.tvBody);
             tvScreenName = itemView.findViewById(R.id.tvScreenName);
-
+            media = itemView.findViewById(R.id.ivTweetImage);
+            cvTweetImage = itemView.findViewById(R.id.cvTweetImage);
+            tvCreatedAt = itemView.findViewById(R.id.tvCreatedAt);
         }
 
         public void bind(Tweet tweet) {
             tvBody.setText(tweet.body);
+            tvCreatedAt.setText((tweet.getRelativeTimeAgo(tweet.createdAt)));
             tvScreenName.setText(tweet.user.screenName);
             Glide.with(context).load(tweet.user.profileImageUrl).into(ivProfileImage);
+
+            if (tweet.media_url == null){
+                media.setVisibility(View.GONE);
+                cvTweetImage.setVisibility(View.GONE);
+            } else {
+                media.setVisibility(View.VISIBLE);
+                cvTweetImage.setVisibility(View.VISIBLE);
+                Glide.with(context).load(tweet.media_url).into(media);
+            }
         }
+
+    }
+
+    // Clean all elements of the recycler
+    public void clear() {
+        tweets.clear();
+        notifyDataSetChanged();
+    }
+
+    // Add a list of items -- change to type used
+    public void addAll(List<Tweet> list) {
+        tweets.addAll(list);
+        notifyDataSetChanged();
     }
 }
